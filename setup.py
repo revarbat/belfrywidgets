@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-VERSION = "0.9.0"
+VERSION = "0.9.2"
 
 
 with open('README.rst') as f:
@@ -23,20 +23,22 @@ setup(
     license='BSD 2-clause',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Intended Audience :: End Users/Desktop',
+        'Environment :: MacOS X',
+        'Environment :: MacOS X :: Aqua',
+        'Environment :: MacOS X :: Carbon',
+        'Environment :: MacOS X :: Cocoa',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Topic :: Software Development :: Testing',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Software Development :: Widget Sets',
     ],
-    keywords='tk widgets',
+    keywords='tkinter widgets',
     install_requires=['setuptools'],
     data_files=data_files,
 )
