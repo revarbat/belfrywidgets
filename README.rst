@@ -22,7 +22,7 @@ Wizard:
 
 CollapsiblePane
 ---------------
-Example code:
+Example code::
 
     from belfrywidgets.collapsiblepane import CollapsiblePane
 
@@ -43,7 +43,7 @@ Example code:
 
 LabelButton
 -----------
-Example code:
+Example code::
 
     from belfrywidgets.labelbutton import LabelButton
     tk = Tk()
@@ -56,7 +56,7 @@ Example code:
 
 TabbedNoteBook
 --------------
-Example code:
+Example code::
 
     from belfrywidgets.tabbednotebook import TabbedNoteBook
 
@@ -95,7 +95,7 @@ Example code:
 
 Wizard
 ------
-Example code:
+Example code::
 
     from belfrywidgets.wizard import Wizard
 
