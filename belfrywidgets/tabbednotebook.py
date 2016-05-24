@@ -16,7 +16,7 @@ class TabbedNoteBook(Frame):
         **kwargs
     ):
         self.master = master
-        self.selected_pane = StringVar()
+        self.selected_pane = None
         self.pane_names = []
         self.panes = {}
         self.tabs = {}
@@ -103,21 +103,32 @@ class TabbedNoteBook(Frame):
         )
         tab.pane = newpane
         if not self.panes:
-            self.selected_pane.set(name)
+            self.selected_pane = name
         self.pane_names.append(name)
         self.panes[name] = newpane
         self.tabs[name] = tab
         self._update_tabs()
         return newpane
 
+    def remove_pane(self, name):
+        if name not in self.panes:
+            return
+        if name == self.selected_pane:
+            self._nextpane()
+            if name == self.selected_pane:
+                self.selected_pane = None
+        tab = self.tabs[name]
+        pane = self.panes[name]
+        del self.panes[name]
+        del self.tabs[name]
+        self.pane_names.remove(name)
+        pane.destroy()
+        tab.destroy()
+
     def _close_tab(self, w):
         if w.closecommand:
             if w.closecommand():
-                del self.tabs[w.name]
-                del self.panes[w.name]
-                self.pane_names.remove(w.name)
-                w.pane.destroy()
-                w.destroy()
+                self.remove_pane(w.name)
 
     def _tab_enter(self, event):
         if event.widget.closebtn:
@@ -135,14 +146,18 @@ class TabbedNoteBook(Frame):
         event.widget = event.widget.tab
         self._tab_leave(event)
 
+    def showpane(self, name):
+        if name in self.panes:
+            self._setpane(name)
+
     def _setpane(self, name):
-        self.selected_pane.set(name)
+        self.selected_pane = name
         self._update_tabs()
 
     def _update_tabs(self):
         for child in self.holder.winfo_children():
             child.forget()
-        selpane = self.selected_pane.get()
+        selpane = self.selected_pane
         for name, tab in self.tabs.items():
             color = '#ddd' if name == selpane else '#aaa'
             for sub in tab.winfo_children():
@@ -152,18 +167,18 @@ class TabbedNoteBook(Frame):
         newpane.pack(side=TOP, fill=BOTH, expand=1)
 
     def _prevpane(self, event=None):
-        selpane = self.selected_pane.get()
+        selpane = self.selected_pane
         pos = self.pane_names.index(selpane)
         pos -= 1
-        self.selected_pane.set(self.pane_names[pos])
+        self.selected_pane = self.pane_names[pos]
         self._update_tabs()
 
     def _nextpane(self, event=None):
-        selpane = self.selected_pane.get()
+        selpane = self.selected_pane
         pos = self.pane_names.index(selpane)
         pos += 1
         pos %= len(self.pane_names)
-        self.selected_pane.set(self.pane_names[pos])
+        self.selected_pane = self.pane_names[pos]
         self._update_tabs()
 
 

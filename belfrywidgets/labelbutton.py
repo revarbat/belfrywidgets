@@ -60,9 +60,11 @@ class LabelButton(Label):
 
 
 if __name__ == "__main__":
+    def printit(txt):
+        print(txt)
     tk = Tk()
-    b1 = LabelButton(tk, text="Button 1", command=lambda: print("B1!"))
-    b2 = LabelButton(tk, text="Button 2", command=lambda: print("B2!"))
+    b1 = LabelButton(tk, text="Button 1", command=lambda: printit("B1!"))
+    b2 = LabelButton(tk, text="Button 2", command=lambda: printit("B2!"))
     b1.pack(side=TOP, padx=20, pady=20)
     b2.pack(side=TOP, padx=20, pady=20)
     tk.mainloop()
