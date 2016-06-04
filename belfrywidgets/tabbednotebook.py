@@ -67,6 +67,10 @@ class TabbedNoteBook(Frame):
                         except:
                             pass
 
+    def pane_label(self, name):
+        tab = self.tabs[name]
+        return tab.label
+
     def add_pane(self, name, label, closecommand=None):
         tab = Frame(
             self.tabsfr,
