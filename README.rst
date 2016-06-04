@@ -90,6 +90,9 @@ Example code::
     lbl3 = Label(pane3, text="This is a third label.")
     lbl3.pack(side=TOP, fill=BOTH, expand=1)
 
+    lbl = tnb.pane_label('two')
+    lbl.config(text="Tab 2")
+
     tk.mainloop()
 
 
