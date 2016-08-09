@@ -19,6 +19,9 @@ Wizard:
   A wizard dialog with Prev/Next/Finish/Cancel buttons, which progresses
   through multiple panes of widgets.
 
+ScrolledListbox:
+  A Listbox widget with scrollbars, similar to the ScrolledText widget.
+
 
 CollapsiblePane
 ---------------
