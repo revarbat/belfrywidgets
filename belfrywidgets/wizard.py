@@ -6,19 +6,25 @@ except:
 
 class Wizard(Toplevel):
     def __init__(
-        self,
-        width=640,
-        height=480,
-        cancelcommand=None,
-        finishcommand=None,
-        **kwargs
-    ):
+            self,
+            width=640,
+            height=480,
+            cancelcommand=None,
+            finishcommand=None,
+            **kwargs
+            ):
         self.selected_pane = None
+        self.pane_entry_cmds = {}
+        self.pane_prev_cmds = {}
+        self.pane_next_cmds = {}
         self.pane_names = []
         self.panes = {}
         self.font = kwargs.get('font', ('Helvetica', '10'))
         self.cancel_command = cancelcommand
         self.finish_command = finishcommand
+        self.prev_enabled = True
+        self.next_enabled = True
+        self.finish_enabled = True
         Toplevel.__init__(
             self,
             borderwidth=0,
@@ -72,7 +78,12 @@ class Wizard(Toplevel):
         self.wm_geometry("%dx%d" % (width, height))
         self.protocol('WM_DELETE_WINDOW', self._cancel)
 
-    def add_pane(self, name, label):
+    def add_pane(
+            self, name, label,
+            entrycommand=None,
+            prevcommand=None,
+            nextcommand=None,
+            ):
         newpane = Frame(
             self.holder,
             borderwidth=0,
@@ -81,55 +92,106 @@ class Wizard(Toplevel):
         )
         if not self.panes:
             self.selected_pane = name
+            if entrycommand:
+                self.after_idle(entrycommand)
         self.pane_names.append(name)
         self.panes[name] = newpane
+        self.pane_entry_cmds[name] = entrycommand
+        self.pane_prev_cmds[name] = prevcommand
+        self.pane_next_cmds[name] = nextcommand
         self._update()
         return newpane
 
+    def del_pane(self, name):
+        if name == self.selected_pane:
+            idx = self.pane_names.index(name)
+            panecnt = len(self.pane_names)
+            if panecnt == 1:
+                self.selected_pane = None
+            elif idx == panecnt - 1:
+                self._prevpane()
+            else:
+                self._nextpane()
+        del (self.pane_entry_cmds[pane])
+        del (self.pane_prev_cmds[pane])
+        del (self.pane_next_cmds[pane])
+        del (self.panes[pane])
+        self.pane_names.remove(pane)
+
+    def show_pane(self, newpane):
+        if newpane not in self.pane_names:
+            raise ValueError("No pane with the name '%s' exists." % newpane)
+        self.selected_pane = newpane
+        entrycmd = self.pane_entry_cmds[newpane]
+        if entrycmd:
+            entrycmd()
+        self._update()
+
+    def set_prev_enabled(self, enable=True):
+        self.prev_enabled = enable
+        self._update()
+
+    def set_next_enabled(self, enable=True):
+        self.next_enabled = enable
+        self._update()
+
+    def set_finish_enabled(self, enable=True):
+        self.finish_enabled = enable
+        self._update()
+
     def _update(self):
         selpane = self.selected_pane
+        prev_state = 'normal'
+        next_state = 'normal'
+        finish_state = 'normal'
+        cancel_state = 'normal'
         if not self.pane_names or selpane == self.pane_names[0]:
-            self.prevbtn.config(state='disabled')
-        else:
-            self.prevbtn.config(state='normal')
-
+            prev_state = 'disabled'
+        if not self.prev_enabled:
+            prev_state = 'disabled'
         if not self.pane_names or selpane == self.pane_names[-1]:
-            self.nextbtn.config(state='disabled')
-        else:
-            self.nextbtn.config(state='normal')
-
-        if self.finish_command:
-            self.fnshbtn.config(state='normal')
-        else:
-            self.fnshbtn.config(state='disabled')
-
-        if self.cancel_command:
-            self.cnclbtn.config(state='normal')
-        else:
-            self.cnclbtn.config(state='disabled')
-
+            next_state = 'disabled'
+        if not self.next_enabled:
+            next_state = 'disabled'
+        if not self.finish_command or not self.finish_enabled:
+            finish_state = 'disabled'
+        if not self.cancel_command:
+            cancel_state = 'disabled'
+        self.prevbtn.config(state=prev_state)
+        self.nextbtn.config(state=next_state)
+        self.fnshbtn.config(state=finish_state)
+        self.cnclbtn.config(state=cancel_state)
         for child in self.holder.winfo_children():
             child.forget()
-        newpane = self.panes[selpane]
-        newpane.pack(side=TOP, fill=BOTH, expand=1)
+        if self.pane_names:
+            newpane = self.panes[selpane]
+            newpane.pack(side=TOP, fill=BOTH, expand=1)
         self.update_idletasks()
         self.update_idletasks()
 
     def _prevpane(self, event=None):
-        selpane = self.selected_pane
-        pos = self.pane_names.index(selpane)
+        oldpane = self.selected_pane
+        prevcmd = self.pane_prev_cmds[oldpane]
+        if prevcmd:
+            prevcmd()
+        if oldpane != self.selected_pane:
+            return
+        pos = self.pane_names.index(oldpane)
         if pos > 0:
             pos -= 1
-        self.selected_pane = self.pane_names[pos]
-        self._update()
+        self.show_pane(self.pane_names[pos])
 
     def _nextpane(self, event=None):
-        selpane = self.selected_pane
-        pos = self.pane_names.index(selpane)
+        oldpane = self.selected_pane
+        nextcmd = self.pane_next_cmds[oldpane]
+        if nextcmd:
+            nextcmd()
+        if oldpane != self.selected_pane:
+            return
+        pos = self.pane_names.index(oldpane)
         if pos < len(self.pane_names) - 1:
             pos += 1
-        self.selected_pane = self.pane_names[pos]
-        self._update()
+        self.show_pane(self.pane_names[pos])
 
     def _finish(self, event=None):
         self.destroy()
@@ -143,32 +205,41 @@ class Wizard(Toplevel):
 
 
 if __name__ == "__main__":
-    def _finish():
-        print("Finish")
-
-    def _cancel():
-        print("Cancel")
-
     def main():
         root = Tk()
         wiz = Wizard(
             width=640,
             height=480,
-            cancelcommand=_cancel,
-            finishcommand=_finish,
+            cancelcommand=lambda: print("Cancel"),
+            finishcommand=lambda: print("Finish"),
         )
 
-        pane1 = wiz.add_pane('one', 'First')
+        def disable_finish():
+            wiz.set_finish_enabled(False)
+
+        def enable_finish():
+            wiz.set_finish_enabled(True)
+
+        pane1 = wiz.add_pane('one', 'First', entrycommand=disable_finish)
         lbl1 = Label(pane1, text="This is the first pane.")
         lbl1.pack(side=TOP, fill=BOTH, expand=1)
 
-        pane2 = wiz.add_pane('two', 'Second')
+        pane2 = wiz.add_pane( 'two', 'Second')
         lbl2 = Label(pane2, text="This is the second pane.")
         lbl2.pack(side=TOP, fill=BOTH, expand=1)
 
-        pane3 = wiz.add_pane('three', 'Third')
+        pane3 = wiz.add_pane(
+            'three', 'Third',
+            entrycommand=enable_finish,
+            prevcommand=disable_finish
+        )
         lbl3 = Label(pane3, text="This is the third pane.")
         lbl3.pack(side=TOP, fill=BOTH, expand=1)
+
+        # wiz.show_pane('two')
+        # wiz.del_pane('two')
+        # wiz.set_prev_enabled(True)
+        # wiz.set_next_enabled(True)
 
         root.wm_withdraw()
         root.wait_window(wiz)

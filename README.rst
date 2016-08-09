@@ -101,34 +101,63 @@ Wizard
 Example code::
 
     from belfrywidgets.wizard import Wizard
-
-    def _finish():
-        print("Finish")
-
-    def _cancel():
-        print("Cancel")
-
+    
     root = Tk()
     wiz = Wizard(
         width=640,
         height=480,
-        cancelcommand=_cancel,
-        finishcommand=_finish,
+        cancelcommand=lambda: print("Cancel"),
+        finishcommand=lambda: print("Finish"),
     )
 
-    pane1 = wiz.add_pane('one', 'First')
+    def disable_finish():
+        wiz.set_finish_enabled(False)
+
+    def enable_finish():
+        wiz.set_finish_enabled(True)
+
+    pane1 = wiz.add_pane('one', 'First', entrycommand=disable_finish)
     lbl1 = Label(pane1, text="This is the first pane.")
     lbl1.pack(side=TOP, fill=BOTH, expand=1)
 
-    pane2 = wiz.add_pane('two', 'Second')
+    pane2 = wiz.add_pane( 'two', 'Second')
     lbl2 = Label(pane2, text="This is the second pane.")
     lbl2.pack(side=TOP, fill=BOTH, expand=1)
 
-    pane3 = wiz.add_pane('three', 'Third')
+    pane3 = wiz.add_pane(
+        'three', 'Third',
+        entrycommand=enable_finish,
+        prevcommand=disable_finish
+    )
     lbl3 = Label(pane3, text="This is the third pane.")
     lbl3.pack(side=TOP, fill=BOTH, expand=1)
 
+    # wiz.show_pane('two')
+    # wiz.del_pane('two')
+    # wiz.set_prev_enabled(True)
+    # wiz.set_next_enabled(True)
+
     root.wm_withdraw()
     root.wait_window(wiz)
+
+
+ScrolledListbox
+---------------
+Example code::
+
+    from belfrywidgets.wizard import Wizard
+
+    root = Tk()
+    lbox = ScrolledListbox(
+        root,
+        horiz_scroll=False,
+        vert_scroll=True,
+        width=30,
+        height=15,
+    )
+    lbox.pack(side=TOP, fill=BOTH, expand=1)
+    for i in range(1,51):
+        lbox.insert(END, "Item %d" % i)
+    tk.mainloop()
 
 
