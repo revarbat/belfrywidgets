@@ -93,7 +93,7 @@ class Wizard(Toplevel):
         if not self.panes:
             self.selected_pane = name
             if entrycommand:
-                self.after_idle(entrycommand)
+                self.after(0, entrycommand)
         self.pane_names.append(name)
         self.panes[name] = newpane
         self.pane_entry_cmds[name] = entrycommand
