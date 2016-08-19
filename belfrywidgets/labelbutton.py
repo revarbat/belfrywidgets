@@ -68,3 +68,6 @@ if __name__ == "__main__":
     b1.pack(side=TOP, padx=20, pady=20)
     b2.pack(side=TOP, padx=20, pady=20)
     tk.mainloop()
+
+
+# vim: expandtab tabstop=4 shiftwidth=4 softtabstop=4 nowrap

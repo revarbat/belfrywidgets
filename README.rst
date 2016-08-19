@@ -22,12 +22,20 @@ Wizard:
 ScrolledListbox:
   A Listbox widget with scrollbars, similar to the ScrolledText widget.
 
+ProgressBar:
+  A rounded progress bar, similar in function to tkinter.ttk.Progressbar,
+  except that the colors are more controllable on all platforms.
+
+ToolTip:
+  Attaches a tooltip to a widget, so that hovering over that widget will
+  show a small tooltip message.
+
 
 CollapsiblePane
 ---------------
 Example code::
 
-    from belfrywidgets.collapsiblepane import CollapsiblePane
+    from belfrywidgets import CollapsiblePane
 
     tk = Tk()
     cp = CollapsiblePane(
@@ -48,7 +56,7 @@ LabelButton
 -----------
 Example code::
 
-    from belfrywidgets.labelbutton import LabelButton
+    from belfrywidgets import LabelButton
     tk = Tk()
     b1 = LabelButton(tk, text="Button 1", command=lambda: print("B1!"))
     b2 = LabelButton(tk, text="Button 2", command=lambda: print("B2!"))
@@ -61,7 +69,7 @@ TabbedNoteBook
 --------------
 Example code::
 
-    from belfrywidgets.tabbednotebook import TabbedNoteBook
+    from belfrywidgets import TabbedNoteBook
 
     def _closeit(name):
         print("Close tab %s" % name)
@@ -103,8 +111,8 @@ Wizard
 ------
 Example code::
 
-    from belfrywidgets.wizard import Wizard
-    
+    from belfrywidgets import Wizard
+
     root = Tk()
     wiz = Wizard(
         width=640,
@@ -148,7 +156,7 @@ ScrolledListbox
 ---------------
 Example code::
 
-    from belfrywidgets.wizard import Wizard
+    from belfrywidgets import Wizard
 
     root = Tk()
     lbox = ScrolledListbox(
@@ -161,6 +169,69 @@ Example code::
     lbox.pack(side=TOP, fill=BOTH, expand=1)
     for i in range(1,51):
         lbox.insert(END, "Item %d" % i)
+    tk.mainloop()
+
+ProgressBar
+-----------
+Indeterminate mode example code::
+
+    from belfrywidgets import ProgressBar, INDETERMINATE
+
+    tk = Tk()
+    tk.config(background="#446")
+    pb = ProgressBar(
+        tk, mode=INDETERMINATE,
+        bordercolor="#446",
+        foreground="red",
+        background="cyan"
+    )
+    pb.pack(fill=BOTH, expand=1, padx=10, pady=10)
+    pb.start()
+    tk.after(20000, pb.stop)
+    tk.mainloop()
+
+Determinate mode example code::
+
+    from belfrywidgets import ProgressBar, DETERMINATE
+
+    tk = Tk()
+    tk.config(background="#446")
+    v = DoubleVar()
+    v.set(0.0)
+    pb = ProgressBar(
+        tk, mode=DETERMINATE,
+        maximum=200,
+        variable=v,
+        bordercolor="#446",
+        foreground="red",
+        background="cyan"
+    )
+    pb.pack(fill=BOTH, expand=1, padx=10, pady=10)
+
+    def inc():
+        v.set(v.get()+1)
+        if v.get() < 200:
+            tk.after(100, inc)
+
+    inc()
+    tk.mainloop()
+
+
+ToolTip
+-------
+Example code::
+
+    from belfrywidgets import ToolTip
+
+    tk = Tk()
+    ent = Entry(tk)
+    txt = Text(tk, borderwidth=2, relief="sunken")
+    ent.pack(side=TOP, padx=5, pady=5)
+    txt.pack(side=TOP, padx=5, pady=5)
+    txt.insert(END, "Tagged Text\n", "footag")
+    txt.insert(END, "Untagged Text\n")
+    ToolTip(ent, "This is an entry widget.")
+    ToolTip(txt, "This is a text widget.", tag="footag")
     tk.mainloop()
 
 

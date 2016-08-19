@@ -11,6 +11,7 @@ class Wizard(Toplevel):
             height=480,
             cancelcommand=None,
             finishcommand=None,
+            default_button="finish",
             **kwargs
             ):
         self.selected_pane = None
@@ -25,6 +26,8 @@ class Wizard(Toplevel):
         self.prev_enabled = True
         self.next_enabled = True
         self.finish_enabled = True
+        self.cancel_enabled = True
+        self.default_button = default_button
         Toplevel.__init__(
             self,
             borderwidth=0,
@@ -139,6 +142,30 @@ class Wizard(Toplevel):
         self.finish_enabled = enable
         self._update()
 
+    def set_cancel_enabled(self, enable=True):
+        self.cancel_enabled = enable
+        self._update()
+
+    def set_prev_text(self, text="< Prev"):
+        self.prevbtn.config(text=text)
+        self._update()
+
+    def set_next_text(self, text="Next >"):
+        self.nextbtn.config(text=text)
+        self._update()
+
+    def set_finish_text(self, text="Finish"):
+        self.fnshbtn.config(text=text)
+        self._update()
+
+    def set_cancel_text(self, text="Cancel"):
+        self.cnclbtn.config(text=text)
+        self._update()
+
+    def set_default_button(self, btn="finish"):
+        self.default_button = btn
+        self._update()
+
     def _update(self):
         selpane = self.selected_pane
         prev_state = 'normal'
@@ -155,7 +182,7 @@ class Wizard(Toplevel):
             next_state = 'disabled'
         if not self.finish_command or not self.finish_enabled:
             finish_state = 'disabled'
-        if not self.cancel_command:
+        if not self.cancel_command or not self.cancel_enabled:
             cancel_state = 'disabled'
         self.prevbtn.config(state=prev_state)
         self.nextbtn.config(state=next_state)
@@ -166,8 +193,28 @@ class Wizard(Toplevel):
         if self.pane_names:
             newpane = self.panes[selpane]
             newpane.pack(side=TOP, fill=BOTH, expand=1)
+        prev_def = "active" if self.default_button == "prev" else "normal"
+        next_def = "active" if self.default_button == "next" else "normal"
+        finish_def = "active" if self.default_button == "finish" else "normal"
+        cancel_def = "active" if self.default_button == "cancel" else "normal"
+        self.prevbtn.config(default=prev_def)
+        self.nextbtn.config(default=next_def)
+        self.fnshbtn.config(default=finish_def)
+        self.cnclbtn.config(default=cancel_def)
+        self.bind('<Return>', self._invoke_default)
         self.update_idletasks()
         self.update_idletasks()
+
+    def _invoke_default(self, event=None):
+        if self.default_button == "prev":
+            self.prevbtn.invoke()
+        elif self.default_button == "next":
+            self.nextbtn.invoke()
+        elif self.default_button == "finish":
+            self.fnshbtn.invoke()
+        elif self.default_button == "cancel":
+            self.cnclbtn.invoke()
+        return "break"
 
     def _prevpane(self, event=None):
         oldpane = self.selected_pane
@@ -220,6 +267,7 @@ if __name__ == "__main__":
         def enable_finish():
             wiz.set_finish_enabled(True)
 
+        wiz.set_default_button('next')
         pane1 = wiz.add_pane('one', 'First', entrycommand=disable_finish)
         lbl1 = Label(pane1, text="This is the first pane.")
         lbl1.pack(side=TOP, fill=BOTH, expand=1)
