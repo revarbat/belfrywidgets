@@ -219,19 +219,26 @@ Determinate mode example code::
 
 ToolTip
 -------
-Example code::
+To provide a tooltip when your mouse hovers over a widget, use the ``ToolTip()`` function like this::
 
     from belfrywidgets import ToolTip
 
     tk = Tk()
-    ent = Entry(tk)
-    txt = Text(tk, borderwidth=2, relief="sunken")
-    ent.pack(side=TOP, padx=5, pady=5)
-    txt.pack(side=TOP, padx=5, pady=5)
-    txt.insert(END, "Tagged Text\n", "footag")
-    txt.insert(END, "Untagged Text\n")
-    ToolTip(ent, "This is an entry widget.")
-    ToolTip(txt, "This is a text widget.", tag="footag")
+    w = Entry(tk)
+    w.pack(side=TOP)
+    ToolTip(w, "This is an entry widget.")
     tk.mainloop()
 
+To provide a tooltip when your mouse hovers over a specific tagged section of text
+in a Text widget, use the ``ToolTip()`` function with the ``tag`` keyword like this::
+
+    from belfrywidgets import ToolTip
+
+    tk = Tk()
+    txt = Text(tk, borderwidth=2, relief="sunken")
+    txt.pack(side=TOP)
+    txt.insert(END, "Tagged Text\n", "tipped")
+    txt.insert(END, "Untagged Text\n")
+    ToolTip(txt, "This is tooltip tagged text in a text widget.", tag="tipped")
+    tk.mainloop()
 
