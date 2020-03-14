@@ -1,9 +1,9 @@
-try:
-    # for Python2
-    import Tkinter as tk
-except ImportError:
-    # for Python3
-    import tkinter as tk
+from sys import version_info
+
+if version_info.major == 2:
+    from Tkinter import *  # noqa
+else:
+    from tkinter import *  # noqa
 
 
 class ToolTip(object):
@@ -32,7 +32,7 @@ class ToolTip(object):
         if self.widget.cget("state") == "disabled":
             return
         if self.tag:
-            self.index = self.widget.index("@%s,%s" % (event.x, event.y))
+            self.index = self.widget.index("@{},{}".format(event.x, event.y))
         self.schedule()
 
     def leave(self, event=None):
@@ -44,10 +44,10 @@ class ToolTip(object):
         self.id = self.widget.after(self.waittime, self.showtip)
 
     def unschedule(self):
-        id = self.id
+        widget_id = self.id
         self.id = None
-        if id:
-            self.widget.after_cancel(id)
+        if widget_id:
+            self.widget.after_cancel(widget_id)
 
     def showtip(self, event=None):
         x = y = 0
@@ -61,11 +61,11 @@ class ToolTip(object):
         x += self.widget.winfo_rootx() + 25
         y += self.widget.winfo_rooty() + 25
         # creates a toplevel window
-        self.tw = tk.Toplevel(self.widget)
+        self.tw = Toplevel(self.widget)
         # Leaves only the label and removes the app window
         self.tw.wm_overrideredirect(True)
-        self.tw.wm_geometry("+%d+%d" % (x, y))
-        label = tk.Label(
+        self.tw.wm_geometry("+{:d}+{:d}".format(x, y))
+        label = Label(
             self.tw,
             text=self.text,
             justify='left',
@@ -84,13 +84,13 @@ class ToolTip(object):
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    ent = tk.Entry(root)
-    txt = tk.Text(root, borderwidth=2, relief="sunken")
-    ent.pack(side=tk.TOP, padx=5, pady=5)
-    txt.pack(side=tk.TOP, padx=5, pady=5)
-    txt.insert(tk.END, "Tagged Text\n", "footag")
-    txt.insert(tk.END, "Untagged Text\n")
+    root = Tk()
+    ent = Entry(root)
+    txt = Text(root, borderwidth=2, relief="sunken")
+    ent.pack(side=TOP, padx=5, pady=5)
+    txt.pack(side=TOP, padx=5, pady=5)
+    txt.insert(END, "Tagged Text\n", "footag")
+    txt.insert(END, "Untagged Text\n")
     ToolTip(ent, "This is an entry widget.")
     ToolTip(txt, "This is a text widget.", tag="footag")
     root.mainloop()

@@ -1,6 +1,9 @@
-try:
+from __future__ import print_function
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except:
+else:
     from tkinter import *  # noqa
 
 
@@ -28,7 +31,7 @@ class LabelButton(Label):
         r = int(r // (256 / mult))
         g = int(g // (256 / mult))
         b = int(b // (256 / mult))
-        return "#%02x%02x%02x" % (r, g, b)
+        return "#{r:02d}{g:02d}{b:02d}".format(r=r, g=g, b=b)
 
     def _evt_enter(self, event):
         bg = self._shade(self.master.cget('background'), 0.75)
@@ -60,11 +63,9 @@ class LabelButton(Label):
 
 
 if __name__ == "__main__":
-    def printit(txt):
-        print(txt)
     tk = Tk()
-    b1 = LabelButton(tk, text="Button 1", command=lambda: printit("B1!"))
-    b2 = LabelButton(tk, text="Button 2", command=lambda: printit("B2!"))
+    b1 = LabelButton(tk, text="Button 1", command=lambda: print("B1!"))
+    b2 = LabelButton(tk, text="Button 2", command=lambda: print("B2!"))
     b1.pack(side=TOP, padx=20, pady=20)
     b2.pack(side=TOP, padx=20, pady=20)
     tk.mainloop()

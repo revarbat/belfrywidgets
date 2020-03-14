@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 
 
 with open('README.rst') as f:
@@ -20,7 +20,7 @@ setup(
     url='https://github.com/revarbat/belfrywidgets',
     download_url='https://github.com/revarbat/belfrywidgets/archive/master.zip',
     packages=['belfrywidgets'],
-    license='MIT License',
+    license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: MacOS X',

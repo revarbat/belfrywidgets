@@ -1,6 +1,8 @@
-try:
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except:
+else:
     from tkinter import *  # noqa
 
 
@@ -57,7 +59,7 @@ class CollapsiblePane(LabelFrame):
             self.holder.config(height=None)
             self.grid_rowconfigure(0, weight=1)
             self.grid_columnconfigure(0, weight=1)
-            self.holder.grid(row=0, column=0, sticky=N+S+E+W)
+            self.holder.grid(row=0, column=0, sticky=N + S + E + W)
         else:
             self.holder.config(height=20)
             self.holder.grid_remove()

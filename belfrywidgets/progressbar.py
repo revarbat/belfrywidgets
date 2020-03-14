@@ -1,6 +1,8 @@
-try:
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except:
+else:
     from tkinter import *  # noqa
 
 import math
@@ -36,6 +38,8 @@ class ProgressBar(Canvas):
         self.phase = -1
         self.timer = None
         self.timer_ms = 10
+        self.length = length
+        self.thickness = thickness
         if orient == HORIZONTAL:
             kwargs['width'] = length
             kwargs['height'] = thickness
@@ -153,8 +157,8 @@ class ProgressBar(Canvas):
         else:
             w = width / 5
             pos = width * 0.5 * (
-                1 - math.cos(2.0 * math.pi * self.phase/100.0)
-            ) - w/2
+                1 - math.cos(2.0 * math.pi * self.phase / 100.0)
+            ) - w / 2
             if self.phase < 0:
                 self.coords(self.bar, [-10, -10, -11, -11])
             elif self.orient == HORIZONTAL:
@@ -165,44 +169,44 @@ class ProgressBar(Canvas):
     def _calc_mask_coords(self):
         width = self.winfo_width()
         height = self.winfo_height()
-        fillet = height/2 if self.orient == HORIZONTAL else width/2
+        fillet = height / 2 if self.orient == HORIZONTAL else width / 2
         kappa = 0.552228474
         bezext = fillet * kappa
         coords = [
-            fillet-1, -1,
-            fillet-1, -1,
+            fillet - 1, -1,
+            fillet - 1, -1,
 
-            width-fillet, -1,
-            width-fillet, -1,
-            width-fillet+bezext, -1,
+            width - fillet, -1,
+            width - fillet, -1,
+            width - fillet + bezext, -1,
 
-            width, fillet-bezext-1,
-            width, fillet-1,
-            width, fillet-1,
+            width, fillet - bezext - 1,
+            width, fillet - 1,
+            width, fillet - 1,
 
-            width, height-fillet,
-            width, height-fillet,
-            width, height-fillet+bezext,
+            width, height - fillet,
+            width, height - fillet,
+            width, height - fillet + bezext,
 
-            width-fillet+bezext, height,
-            width-fillet, height,
-            width-fillet, height,
+            width - fillet + bezext, height,
+            width - fillet, height,
+            width - fillet, height,
 
-            fillet-1, height,
-            fillet-1, height,
-            fillet-bezext-1, height,
+            fillet - 1, height,
+            fillet - 1, height,
+            fillet - bezext - 1, height,
 
-            -1, height-fillet+bezext,
-            -1, height-fillet,
-            -1, height-fillet,
+            -1, height - fillet + bezext,
+            -1, height - fillet,
+            -1, height - fillet,
 
-            -1, fillet-1,
-            -1, fillet-1,
-            -1, fillet-bezext-1,
+            -1, fillet - 1,
+            -1, fillet - 1,
+            -1, fillet - bezext - 1,
 
-            fillet-bezext-1, -1,
-            fillet-1, -1,
-            fillet-1, -1,
+            fillet - bezext - 1, -1,
+            fillet - 1, -1,
+            fillet - 1, -1,
 
             fillet, -fillet,
             fillet, -fillet,
@@ -212,24 +216,24 @@ class ProgressBar(Canvas):
             -fillet, -fillet,
             -fillet, -fillet,
 
-            -fillet, height+fillet,
-            -fillet, height+fillet,
-            -fillet, height+fillet,
+            -fillet, height + fillet,
+            -fillet, height + fillet,
+            -fillet, height + fillet,
 
-            width+fillet, height+fillet,
-            width+fillet, height+fillet,
-            width+fillet, height+fillet,
+            width + fillet, height + fillet,
+            width + fillet, height + fillet,
+            width + fillet, height + fillet,
 
-            width+fillet, -fillet,
-            width+fillet, -fillet,
-            width+fillet, -fillet,
+            width + fillet, -fillet,
+            width + fillet, -fillet,
+            width + fillet, -fillet,
 
-            fillet-1, -fillet,
-            fillet-1, -fillet,
-            fillet-1, -fillet,
+            fillet - 1, -fillet,
+            fillet - 1, -fillet,
+            fillet - 1, -fillet,
 
-            fillet-1, -1,
-            fillet-1, -1,
+            fillet - 1, -1,
+            fillet - 1, -1,
         ]
         return coords
 
@@ -248,7 +252,7 @@ if __name__ == "__main__":
     pb.pack(fill=BOTH, expand=1, padx=10, pady=10)
 
     def inc():
-        v.set(v.get()+1)
+        v.set(v.get() + 1)
         if v.get() < 200:
             tk.after(50, inc)
 
