@@ -1,6 +1,8 @@
-try:  # Python 2
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except ImportError:  # Python 3
+else:
     from tkinter import *  # noqa
 
 
@@ -9,8 +11,7 @@ class ScrolledListbox(Listbox):
             self, master,
             vert_scroll=True,
             horiz_scroll=True,
-            **kwargs
-            ):
+            **kwargs):
         self.hbar = None
         self.vbar = None
         self.frame = Frame(
@@ -34,11 +35,11 @@ class ScrolledListbox(Listbox):
             )
             kwargs.setdefault('xscrollcommand', self.hbar.set)
         Listbox.__init__(self, self.frame, **kwargs)
-        Listbox.grid(self, row=0, column=0, sticky=N+S+E+W)
+        Listbox.grid(self, row=0, column=0, sticky=N + S + E + W)
         if vert_scroll:
-            self.vbar.grid(row=0, column=1, sticky=N+S)
+            self.vbar.grid(row=0, column=1, sticky=N + S)
         if horiz_scroll:
-            self.hbar.grid(row=1, column=0, sticky=E+W)
+            self.hbar.grid(row=1, column=0, sticky=E + W)
         self.frame.grid_columnconfigure(0, weight=1)
         self.frame.grid_rowconfigure(0, weight=1)
 
@@ -63,8 +64,8 @@ if __name__ == "__main__":
             height=15,
         )
         lbox.pack(side=TOP, fill=BOTH, expand=1)
-        for i in range(1,51):
-            lbox.insert(END, "Item %d" % i)
+        for i in range(1, 51):
+            lbox.insert(END, "Item {:d}".format(i))
         tk.mainloop()
 
     main()

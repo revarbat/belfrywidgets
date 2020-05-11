@@ -1,7 +1,12 @@
-try:
+from __future__ import print_function
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except:
+    import ttk
+else:
     from tkinter import *  # noqa
+    import tkinter.ttk as ttk
 
 
 class Wizard(Toplevel):
@@ -12,8 +17,7 @@ class Wizard(Toplevel):
             cancelcommand=None,
             finishcommand=None,
             default_button="finish",
-            **kwargs
-            ):
+            **kwargs):
         self.selected_pane = None
         self.pane_entry_cmds = {}
         self.pane_prev_cmds = {}
@@ -46,25 +50,25 @@ class Wizard(Toplevel):
             highlightthickness=0,
             takefocus=0,
         )
-        self.prevbtn = Button(
+        self.prevbtn = ttk.Button(
             self.btnsfr,
             text="< Prev",
             width=6,
             command=self._prevpane,
         )
-        self.nextbtn = Button(
+        self.nextbtn = ttk.Button(
             self.btnsfr,
             text="Next >",
             width=6,
             command=self._nextpane,
         )
-        self.fnshbtn = Button(
+        self.fnshbtn = ttk.Button(
             self.btnsfr,
             text="Finish",
             width=6,
             command=self._finish,
         )
-        self.cnclbtn = Button(
+        self.cnclbtn = ttk.Button(
             self.btnsfr,
             text="Cancel",
             width=6,
@@ -78,15 +82,14 @@ class Wizard(Toplevel):
         self.holder.pack(side=TOP, fill=BOTH, expand=1)
         self.btnsfr.pack(side=TOP, fill=X, expand=0)
 
-        self.wm_geometry("%dx%d" % (width, height))
+        self.wm_geometry("{width:d}x{height:d}".format(width=width, height=height))
         self.protocol('WM_DELETE_WINDOW', self._cancel)
 
     def add_pane(
             self, name, label,
             entrycommand=None,
             prevcommand=None,
-            nextcommand=None,
-            ):
+            nextcommand=None):
         newpane = Frame(
             self.holder,
             borderwidth=0,
@@ -115,15 +118,15 @@ class Wizard(Toplevel):
                 self._prevpane()
             else:
                 self._nextpane()
-        del (self.pane_entry_cmds[pane])
-        del (self.pane_prev_cmds[pane])
-        del (self.pane_next_cmds[pane])
-        del (self.panes[pane])
-        self.pane_names.remove(pane)
+        del self.pane_entry_cmds[name]
+        del self.pane_prev_cmds[name]
+        del self.pane_next_cmds[name]
+        del self.panes[name]
+        self.pane_names.remove(name)
 
     def show_pane(self, newpane):
         if newpane not in self.pane_names:
-            raise ValueError("No pane with the name '%s' exists." % newpane)
+            raise ValueError("No pane with the name '{}' exists.".format(newpane))
         self.selected_pane = newpane
         entrycmd = self.pane_entry_cmds[newpane]
         if entrycmd:
@@ -272,7 +275,7 @@ if __name__ == "__main__":
         lbl1 = Label(pane1, text="This is the first pane.")
         lbl1.pack(side=TOP, fill=BOTH, expand=1)
 
-        pane2 = wiz.add_pane( 'two', 'Second')
+        pane2 = wiz.add_pane('two', 'Second')
         lbl2 = Label(pane2, text="This is the second pane.")
         lbl2.pack(side=TOP, fill=BOTH, expand=1)
 

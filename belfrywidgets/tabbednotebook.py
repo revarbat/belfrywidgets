@@ -1,7 +1,10 @@
+from __future__ import print_function
 import platform
-try:
+from sys import version_info
+
+if version_info.major == 2:
     from Tkinter import *  # noqa
-except:
+else:
     from tkinter import *  # noqa
 
 from belfrywidgets.labelbutton import LabelButton
@@ -134,11 +137,13 @@ class TabbedNoteBook(Frame):
             if w.closecommand():
                 self.remove_pane(w.name)
 
-    def _tab_enter(self, event):
+    @staticmethod
+    def _tab_enter(event):
         if event.widget.closebtn:
             event.widget.closebtn.config(text=u'X')
 
-    def _tab_leave(self, event):
+    @staticmethod
+    def _tab_leave(event):
         if event.widget.closebtn:
             event.widget.closebtn.config(text=' ')
 
@@ -179,8 +184,7 @@ class TabbedNoteBook(Frame):
 
     def _nextpane(self, event=None):
         selpane = self.selected_pane
-        pos = self.pane_names.index(selpane)
-        pos += 1
+        pos = self.pane_names.index(selpane) + 1
         pos %= len(self.pane_names)
         self.selected_pane = self.pane_names[pos]
         self._update_tabs()
@@ -188,7 +192,7 @@ class TabbedNoteBook(Frame):
 
 if __name__ == "__main__":
     def _closeit(name):
-        print("Close tab %s" % name)
+        print("Close tab {}".format(name))
         # Return true to allow tab to be closed.
         return True
 
